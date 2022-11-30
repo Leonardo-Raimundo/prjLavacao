@@ -6,15 +6,13 @@ public class Veiculo implements Serializable {
 
     private int id;
     private String placa;
-    private Marca marca;
     private Modelo modelo;
     private Cor cor;
     private String observacoes;
 
-    public Veiculo(int id, String placa, Marca marca, Modelo modelo, Cor cor, String observacoes) {
+    public Veiculo(int id, String placa, Modelo modelo, Cor cor, String observacoes) {
         this.id = id;
         this.placa = placa;
-        this.marca = marca;
         this.modelo = modelo;
         this.cor = cor;
         this.observacoes = observacoes;
@@ -38,14 +36,6 @@ public class Veiculo implements Serializable {
 
     public void setPlaca(String placa) {
         this.placa = placa;
-    }
-
-    public Marca getMarca() {
-        return marca;
-    }
-
-    public void setMarca(Marca marca) {
-        this.marca = marca;
     }
 
     public Modelo getModelo() {

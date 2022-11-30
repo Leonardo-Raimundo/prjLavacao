@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifsc.fln.controller;
 
 import br.edu.ifsc.fln.model.dao.ModeloDAO;
@@ -47,6 +42,10 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
 
     @FXML
     private Label lbModeloMarca;
+    @FXML
+    private Label lbMotorCombustivel;
+    @FXML
+    private Label lbModeloMotor;
 
     @FXML
     private Button btInserir;
@@ -64,7 +63,7 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
     private final Database database = DatabaseFactory.getDatabase("mysql");
     private final Connection connection = database.conectar();
     private final ModeloDAO modeloDAO = new ModeloDAO();
-    
+
     /**
      * Initializes the controller class.
      */
@@ -81,13 +80,13 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
 
     public void carregarTableView() {
         tableColumnDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
-        
+
         listaModelos = modeloDAO.listar();
-        
+
         observableListModelos = FXCollections.observableArrayList(listaModelos);
         tableView.setItems(observableListModelos);
     }
-    
+
     public void selecionarItemTableView(Modelo modelo) {
         DecimalFormat df = new DecimalFormat("0.00");
         if (modelo != null) {
@@ -100,7 +99,6 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
             lbModeloMarca.setText("");
         }
     }
-    
 
     @FXML
     public void handleBtInserir() throws IOException {
@@ -111,7 +109,7 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
             carregarTableView();
         }
     }
-    
+
     @FXML
     public void handleBtAlterar() throws IOException {
         Modelo modelo = tableView.getSelectionModel().getSelectedItem();
@@ -127,7 +125,7 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
             alert.show();
         }
     }
-    
+
     @FXML
     public void handleBtRemover() throws IOException {
         Modelo modelo = tableView.getSelectionModel().getSelectedItem();
@@ -140,28 +138,27 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
             alert.show();
         }
     }
-    
+
     public boolean showFXMLAnchorPaneCadastrosModelosDialog(Modelo modelo) throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(FXMLAnchorPaneCadastroModeloDialogController.class.getResource( 
-            "../view/FXMLAnchorPaneCadastroModeloDialog.fxml"));
-        AnchorPane page = (AnchorPane)loader.load();
-        
+        loader.setLocation(FXMLAnchorPaneCadastroModeloDialogController.class.getResource(
+                "../view/FXMLAnchorPaneCadastroModeloDialog.fxml"));
+        AnchorPane page = (AnchorPane) loader.load();
+
         //criando um estágio de diálogo  (Stage Dialog)
         Stage dialogStage = new Stage();
         dialogStage.setTitle("Cadastro de modelos");
         Scene scene = new Scene(page);
         dialogStage.setScene(scene);
-        
+
         //Setando o modelo ao controller
         FXMLAnchorPaneCadastroModeloDialogController controller = loader.getController();
         controller.setDialogStage(dialogStage);
         controller.setModelo(modelo);
-        
+
         dialogStage.showAndWait();
-        
+
         return controller.isButtonConfirmarClicked();
     }
-
 
 }

@@ -4,12 +4,17 @@ import java.io.Serializable;
 
 public class Modelo implements Serializable {
 
-    private int id;    
+    private int id;
+    
     private String descricao;
-    
+
     private Marca marca;
-    
-    //private int cdCategoria; // E R R A D O
+
+    private Motor motor;
+
+    public Modelo() {
+        this.createMotor();
+    }
 
     public Modelo(int id, String descricao, Marca marca) {
         this.id = id;
@@ -17,7 +22,9 @@ public class Modelo implements Serializable {
         this.marca = marca;
     }
 
-    public Modelo() {
+    private void createMotor() {
+        this.motor = new Motor();
+        this.motor.setModelo(this);
     }
 
     public Modelo(int id, String descricao) {
@@ -49,9 +56,13 @@ public class Modelo implements Serializable {
         this.marca = marca;
     }
 
+    public Motor getMotor() {
+        return motor;
+    }
+
     @Override
     public String toString() {
-        return "Modelo{" + "id=" + id + ", descricao=" + descricao + ", marca=" + marca + '}';
+        return descricao;
     }
-    
+
 }

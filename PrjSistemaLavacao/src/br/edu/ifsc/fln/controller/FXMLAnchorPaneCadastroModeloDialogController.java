@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifsc.fln.controller;
 
 import br.edu.ifsc.fln.model.dao.MarcaDAO;
 import br.edu.ifsc.fln.model.database.Database;
 import br.edu.ifsc.fln.model.database.DatabaseFactory;
+import br.edu.ifsc.fln.model.domain.ETipoCombustivel;
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
-import java.math.BigDecimal;
+import br.edu.ifsc.fln.model.domain.Motor;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.List;
@@ -21,15 +17,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-/**
- * FXML Controller class
- *
- * @author mpisching
- */
 public class FXMLAnchorPaneCadastroModeloDialogController implements Initializable {
 
     @FXML
@@ -37,25 +29,27 @@ public class FXMLAnchorPaneCadastroModeloDialogController implements Initializab
 
     @FXML
     private ComboBox<Marca> cbMarca;
-
+    @FXML
+    private ChoiceBox<ETipoCombustivel> cbTipoCombustivel;
+    @FXML
+    private TextField tfMotorPotencia;
     @FXML
     private Button btConfirmar;
 
     @FXML
     private Button btCancelar;
-    
+
 //    private List<Categoria> listaCategorias;
 //    private ObservableList<Categoria> observableListCategorias;
-        
     //atributos para manipulação de banco de dados
     private final Database database = DatabaseFactory.getDatabase("mysql");
     private final Connection connection = database.conectar();
     private final MarcaDAO marcaDAO = new MarcaDAO();
-    
+
     private Stage dialogStage;
     private boolean buttonConfirmarClicked = false;
-    private Modelo modelo;  
-    
+    private Modelo modelo;
+
     /**
      * Initializes the controller class.
      */
@@ -63,12 +57,13 @@ public class FXMLAnchorPaneCadastroModeloDialogController implements Initializab
     public void initialize(URL url, ResourceBundle rb) {
         marcaDAO.setConnection(connection);
         carregarComboBoxMarcas();
+        carregarChoiceBoxETipoCombustivel();
         setFocusLostHandle();
-    } 
-    
+    }
+
     private void setFocusLostHandle() {
         tfDescricao.focusedProperty().addListener((ov, oldV, newV) -> {
-        if (!newV) { // focus lost
+            if (!newV) { // focus lost
                 if (tfDescricao.getText() == null || tfDescricao.getText().isEmpty()) {
                     //System.out.println("teste focus lost");
                     tfDescricao.requestFocus();
@@ -76,31 +71,21 @@ public class FXMLAnchorPaneCadastroModeloDialogController implements Initializab
             }
         });
     }
-    
-//This works fine too:    
-//root.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-//    focusState(newValue);
-//});
-//
-//private void focusState(boolean value) {
-//    if (value) {
-//        System.out.println("Focus Gained");
-//    }
-//    else {
-//        System.out.println("Focus Lost");
-//    }
-//} 
-    
+
+    public void carregarChoiceBoxETipoCombustivel() {
+        cbTipoCombustivel.setItems(FXCollections.observableArrayList(ETipoCombustivel.values()));
+    }
+
     private List<Marca> listaMarcas;
-    private ObservableList<Marca> observableListMarcas; 
-    
+    private ObservableList<Marca> observableListMarcas;
+
     public void carregarComboBoxMarcas() {
         listaMarcas = marcaDAO.listar();
-        observableListMarcas = 
-                FXCollections.observableArrayList(listaMarcas);
+        observableListMarcas
+                = FXCollections.observableArrayList(listaMarcas);
         cbMarca.setItems(observableListMarcas);
-    }    
-    
+    }
+
     /**
      * @return the dialogStage
      */
@@ -143,37 +128,39 @@ public class FXMLAnchorPaneCadastroModeloDialogController implements Initializab
         this.modelo = modelo;
         tfDescricao.setText(modelo.getDescricao());
         cbMarca.getSelectionModel().select(modelo.getMarca());
-    }    
-    
+    }
+
     @FXML
     private void handleBtConfirmar() {
         if (validarEntradaDeDados()) {
             modelo.setDescricao(tfDescricao.getText());
             modelo.setMarca(
                     cbMarca.getSelectionModel().getSelectedItem());
+            modelo.getMotor().setPotencia(Integer.parseInt(tfMotorPotencia.getText()));
+            modelo.getMotor().setTipoCombustivel(cbTipoCombustivel.getSelectionModel().getSelectedItem());
 
             buttonConfirmarClicked = true;
             dialogStage.close();
         }
     }
-    
+
     @FXML
     private void handleBtCancelar() {
         dialogStage.close();
     }
-    
-        //validar entrada de dados do cadastro
+
+    //validar entrada de dados do cadastro
     private boolean validarEntradaDeDados() {
         String errorMessage = "";
-        
+
         if (tfDescricao.getText() == null || tfDescricao.getText().isEmpty()) {
             errorMessage += "Descrição inválida!\n";
         }
-        
+
         if (cbMarca.getSelectionModel().getSelectedItem() == null) {
             errorMessage += "Selecione uma marca!\n";
         }
-        
+
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -185,5 +172,5 @@ public class FXMLAnchorPaneCadastroModeloDialogController implements Initializab
             return false;
         }
     }
-   
+
 }

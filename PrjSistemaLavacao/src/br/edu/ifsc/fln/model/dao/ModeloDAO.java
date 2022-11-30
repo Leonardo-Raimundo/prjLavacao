@@ -2,6 +2,7 @@ package br.edu.ifsc.fln.model.dao;
 
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
+import br.edu.ifsc.fln.model.domain.Motor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,13 +23,21 @@ public class ModeloDAO {
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
+    
+    
 
     public boolean inserir(Modelo modelo) {
-        String sql = "INSERT INTO modelo(modeloDescricao,idMarca) VALUES(?,?)";
+        final String sql = "INSERT INTO modelo(modeloDescricao,idMarca) VALUES(?,?);";
+        final String sqlMotor = "INSERT INTO motor (idModelo, motorPotencia, tipoCombustivel) VALUES((SELECT max(modeloId) FROM modelo),?,?);";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, modelo.getDescricao());
             stmt.setInt(2, modelo.getMarca().getId());
+            stmt.execute();
+            //registrar o motor
+            stmt = connection.prepareStatement(sqlMotor);
+            stmt.setInt(1, modelo.getMotor().getPotencia());
+            stmt.setString(2,modelo.getMotor().getTipoCombustivel().name());
             stmt.execute();
             return true;
         } catch (SQLException ex) {

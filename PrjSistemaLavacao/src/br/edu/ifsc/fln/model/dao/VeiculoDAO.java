@@ -1,5 +1,7 @@
 package br.edu.ifsc.fln.model.dao;
 
+import br.edu.ifsc.fln.model.domain.Cor;
+import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
 import br.edu.ifsc.fln.model.domain.Veiculo;
 import java.sql.Connection;
@@ -24,15 +26,15 @@ public class VeiculoDAO {
     }
 
     public boolean inserir(Veiculo veiculo) {
-        String sql = "INSERT INTO veiculo(veiculoPlaca,veiculoObservacoes,idMarca, idModelo, idCor) "
-                + "VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO veiculo(veiculoPlaca,veiculoObservacoes, idModelo, idCor) "
+                + "VALUES(?,?,?,?)";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, veiculo.getPlaca());
             stmt.setString(2, veiculo.getObservacoes());
-            stmt.setInt(3, veiculo.getMarca().getId());
-            stmt.setInt(4, veiculo.getModelo().getId());
-            stmt.setInt(5, veiculo.getCor().getId());
+//            stmt.setInt(3, veiculo.getModelo().getMarca().getId());
+            stmt.setInt(3, veiculo.getModelo().getId());
+            stmt.setInt(4, veiculo.getCor().getId());
             stmt.execute();
             return true;
         } catch (SQLException ex) {
@@ -42,16 +44,16 @@ public class VeiculoDAO {
     }
 
     public boolean alterar(Veiculo veiculo) {
-        String sql = "UPDATE veiculo SET veiculoPlaca=?, veiculoObservacoes=?, idMarca=?, idModelo=?, "
+        String sql = "UPDATE veiculo SET veiculoPlaca=?, veiculoObservacoes=?, idModelo=?, "
                 + "idCor=? WHERE veiculoId=?";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, veiculo.getPlaca());
             stmt.setString(2, veiculo.getObservacoes());
-            stmt.setInt(3, veiculo.getMarca().getId());
-            stmt.setInt(4, veiculo.getModelo().getId());
-            stmt.setInt(5, veiculo.getCor().getId());
-            stmt.setInt(6, veiculo.getId());
+//            stmt.setInt(3, veiculo.getModelo().getMarca().getId());
+            stmt.setInt(3, veiculo.getModelo().getId());
+            stmt.setInt(4, veiculo.getCor().getId());
+            stmt.setInt(5, veiculo.getId());
             stmt.execute();
             return true;
         } catch (SQLException ex) {
@@ -75,10 +77,10 @@ public class VeiculoDAO {
 
     public List<Veiculo> listar() {
         String sql = "SELECT veiculo.veiculoId, veiculo.veiculoPlaca, veiculo.veiculoObservacoes, "
-                + " marca.marcaId, marca.marcaNome, modelo.modeloId, modelo.modeloDescricao, cor.corId, cor.corNome "
+                + "marca.marcaId, marca.marcaNome, modelo.modeloId, modelo.modeloDescricao, cor.corId, cor.corNome "
                 + "FROM veiculo INNER JOIN modelo ON modelo.modeloId = veiculo.idModelo "
-                + "INNER JOIN marca ON marca.marcaId = veiculo.idMarca "
-                + "INNER JOIN cor ON cor.corId = veiculo.idCor;";
+                + "INNER JOIN marca ON marca.marcaId = modelo.idMarca "
+                + "INNER JOIN cor ON cor.corId = veiculo.idCor";
         List<Veiculo> retorno = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -93,7 +95,7 @@ public class VeiculoDAO {
         return retorno;
     }
 
-//    public List<Veiculo> listarPorModelo(Modelo modelo) {
+//    public List<Veiculo> listarPorModelo(Modelo modelo) {;
 //        String sql = "SELECT veiculo.veiculoId, veiculo.veiculoPlaca, veiculoObservacoes "
 //                + " marca.marcaId, marca.marcaNome "
 //                + "FROM modelo INNER JOIN marca ON marca.marcaId = modelo.idMarca WHERE marcaId = ?;";
@@ -131,13 +133,23 @@ public class VeiculoDAO {
 
     private Veiculo populateVO(ResultSet rs) throws SQLException {
         Veiculo veiculo = new Veiculo();
+        Marca marca = new Marca();
         Modelo modelo = new Modelo();
+        Cor cor = new Cor();
+        
+        modelo.setMarca(marca);
         veiculo.setModelo(modelo);
+        veiculo.setCor(cor);
 
+        veiculo.setObservacoes(rs.getString("veiculoObservacoes"));
         veiculo.setId(rs.getInt("veiculoId"));
         veiculo.setPlaca(rs.getString("veiculoPlaca"));
+        marca.setId(rs.getInt("marcaId"));
+        marca.setNome(rs.getString("marcaNome"));
         modelo.setId(rs.getInt("modeloId"));
         modelo.setDescricao(rs.getString("modeloDescricao"));
+        cor.setId(rs.getInt("corId"));
+        cor.setNome(rs.getString("corNome"));
         return veiculo;
     }
 }
