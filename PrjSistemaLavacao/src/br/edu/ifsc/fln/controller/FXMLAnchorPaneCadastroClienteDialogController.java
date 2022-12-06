@@ -1,10 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package br.edu.ifsc.fln.controller;
 
 import br.edu.ifsc.fln.model.domain.Cliente;
+import br.edu.ifsc.fln.model.domain.PessoaFisica;
+import br.edu.ifsc.fln.model.domain.PessoaJuridica;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -24,31 +22,34 @@ public class FXMLAnchorPaneCadastroClienteDialogController implements Initializa
     private Button btConfirmar;
 
     @FXML
+    private DatePicker dpDataCadastro;
+
+    @FXML
     private DatePicker dpDataNascimento;
 
     @FXML
-    private TextField tfCpf;
+    private TextField tfCPFCNPJ;
 
     @FXML
-    private TextField tfEndereco;
+    private TextField tfCelular;
+
+    @FXML
+    private TextField tfEmail;
+
+    @FXML
+    private TextField tfInscEstadual;
 
     @FXML
     private TextField tfNome;
 
-    @FXML
-    private TextField tfTelefone;
-    
     private Stage dialogStage;
     private boolean btConfirmarClicked = false;
     private Cliente cliente;
-    
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }       
+    }
 
     public boolean isBtConfirmarClicked() {
         return btConfirmarClicked;
@@ -73,47 +74,97 @@ public class FXMLAnchorPaneCadastroClienteDialogController implements Initializa
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
         this.tfNome.setText(this.cliente.getNome());
-        this.tfCpf.setText(this.cliente.getCpf());
-        this.tfTelefone.setText(this.cliente.getTelefone());
-        this.tfEndereco.setText(this.cliente.getEndereco());
-        dpDataNascimento.setValue(this.cliente.getDataNascimento());
+        this.tfCelular.setText(this.cliente.getCelular());
+        this.tfEmail.setText(this.cliente.getEmail());
+        this.dpDataCadastro.setValue(this.cliente.getDataCadastro());
+
+        if (cliente instanceof PessoaFisica) {
+            tfCPFCNPJ.setText(((PessoaFisica) this.cliente).getCpf());
+            dpDataNascimento.setValue(((PessoaFisica) this.cliente).getDataNascimento());
+            tfInscEstadual.setDisable(true);
+            dpDataNascimento.setDisable(false);
+        } else {
+            tfCPFCNPJ.setText(((PessoaJuridica) this.cliente).getCnpj());
+            tfInscEstadual.setText(((PessoaJuridica) this.cliente).getInscricaoEstadual());
+            dpDataNascimento.setDisable(true);
+            tfInscEstadual.setDisable(false);
+        }
     }
-    
 
     @FXML
     public void handleBtConfirmar() {
         if (validarEntradaDeDados()) {
             cliente.setNome(tfNome.getText());
-            cliente.setCpf(tfCpf.getText());
-            cliente.setTelefone(tfTelefone.getText());
-            cliente.setEndereco(tfEndereco.getText());
-            cliente.setDataNascimento(dpDataNascimento.getValue());
+            cliente.setCelular(tfCelular.getText());
+            cliente.setEmail(tfEmail.getText());
+            cliente.setDataCadastro(dpDataCadastro.getValue());
 
+            if (cliente instanceof PessoaFisica) {
+                ((PessoaFisica) cliente).setCpf(tfCPFCNPJ.getText());
+                ((PessoaFisica) cliente).setDataNascimento(dpDataNascimento.getValue());
+            } else {
+                ((PessoaJuridica) cliente).setCnpj(tfCPFCNPJ.getText());
+                ((PessoaJuridica) cliente).setInscricaoEstadual(tfInscEstadual.getText());
+            }
             btConfirmarClicked = true;
             dialogStage.close();
         }
     }
-    
+
     @FXML
     public void handleBtCancelar() {
         dialogStage.close();
     }
-    
+
+    @FXML
+    public void handlePessoaFisica() {
+        this.tfInscEstadual.setDisable(true);
+        this.dpDataNascimento.setDisable(false);
+    }
+
+    @FXML
+    public void handlePessoaJuridica() {
+        this.tfInscEstadual.setDisable(false);
+        this.dpDataNascimento.setDisable(true);
+    }
+
     //método para validar a entrada de dados
     private boolean validarEntradaDeDados() {
         String errorMessage = "";
         if (this.tfNome.getText() == null || this.tfNome.getText().length() == 0) {
             errorMessage += "Nome inválido.\n";
         }
-        
-        if (this.tfCpf.getText() == null || this.tfCpf.getText().length() == 0) {
-            errorMessage += "CPF inválido.\n";
+
+        if (this.tfCelular.getText() == null || this.tfCelular.getText().length() == 0) {
+            errorMessage += "Celular inválido.\n";
         }
-        
-        if (this.tfTelefone.getText() == null || this.tfTelefone.getText().length() == 0) {
-            errorMessage += "Telefone inválido.\n";
+
+        if (this.tfEmail.getText() == null || this.tfEmail.getText().length() == 0) {
+            errorMessage += "E-mail inválido.\n";
         }
-        
+
+        if (this.dpDataCadastro.getValue() == null) {
+            errorMessage += "Data inválida.\n";
+        }
+
+        if (cliente instanceof PessoaFisica) {
+            if (this.tfCPFCNPJ.getText() == null || this.tfCPFCNPJ.getText().length() == 0) {
+                errorMessage += "CPF inválido. \n";
+            }
+
+            if (this.dpDataNascimento.getValue() == null) {
+                errorMessage += "Data de Nascimento inválida. \n";
+            }
+        } else {
+            if (this.tfCPFCNPJ.getText() == null || this.tfCPFCNPJ.getText().length() == 0) {
+                errorMessage += "CNPJ inválido. \n";
+            }
+
+            if (this.tfInscEstadual.getText() == null || this.tfInscEstadual.getText().length() == 0) {
+                errorMessage += "Inscrição Estadual inválida. \n";
+            }
+        }
+
         if (errorMessage.length() == 0) {
             return true;
         } else {
@@ -126,5 +177,5 @@ public class FXMLAnchorPaneCadastroClienteDialogController implements Initializa
             return false;
         }
     }
-    
+
 }

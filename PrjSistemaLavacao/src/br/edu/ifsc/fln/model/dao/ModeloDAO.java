@@ -1,8 +1,8 @@
 package br.edu.ifsc.fln.model.dao;
 
+import br.edu.ifsc.fln.model.domain.ETipoCombustivel;
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
-import br.edu.ifsc.fln.model.domain.Motor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +23,6 @@ public class ModeloDAO {
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
-    
-    
 
     public boolean inserir(Modelo modelo) {
         final String sql = "INSERT INTO modelo(modeloDescricao,idMarca) VALUES(?,?);";
@@ -37,7 +35,7 @@ public class ModeloDAO {
             //registrar o motor
             stmt = connection.prepareStatement(sqlMotor);
             stmt.setInt(1, modelo.getMotor().getPotencia());
-            stmt.setString(2,modelo.getMotor().getTipoCombustivel().name());
+            stmt.setString(2, modelo.getMotor().getTipoCombustivel().name());
             stmt.execute();
             return true;
         } catch (SQLException ex) {
@@ -75,8 +73,10 @@ public class ModeloDAO {
     }
 
     public List<Modelo> listar() {
-        String sql = "SELECT modelo.modeloId, modelo.modeloDescricao, marca.marcaId, marca.marcaNome "
-                + "FROM modelo INNER JOIN marca ON marca.marcaId = modelo.idMarca;";
+        String sql = "SELECT modelo.modeloId, modelo.modeloDescricao, marca.marcaId, marca.marcaNome, "
+                + "motor.motorPotencia, motor.tipoCombustivel "
+                + "FROM modelo INNER JOIN marca ON marca.marcaId = modelo.idMarca "
+                + "INNER JOIN motor ON motor.idModelo = modelo.modeloId";
         List<Modelo> retorno = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -135,6 +135,8 @@ public class ModeloDAO {
         modelo.setDescricao(rs.getString("modeloDescricao"));
         marca.setId(rs.getInt("marcaId"));
         marca.setNome(rs.getString("marcaNome"));
+        modelo.getMotor().setPotencia(rs.getInt("motorPotencia"));
+        modelo.getMotor().setTipoCombustivel(Enum.valueOf(ETipoCombustivel.class, rs.getString("tipoCombustivel")));
         return modelo;
     }
 }

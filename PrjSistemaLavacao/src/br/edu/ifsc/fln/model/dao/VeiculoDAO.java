@@ -1,6 +1,7 @@
 package br.edu.ifsc.fln.model.dao;
 
 import br.edu.ifsc.fln.model.domain.Cor;
+import br.edu.ifsc.fln.model.domain.ETipoCombustivel;
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
 import br.edu.ifsc.fln.model.domain.Veiculo;
@@ -77,10 +78,12 @@ public class VeiculoDAO {
 
     public List<Veiculo> listar() {
         String sql = "SELECT veiculo.veiculoId, veiculo.veiculoPlaca, veiculo.veiculoObservacoes, "
-                + "marca.marcaId, marca.marcaNome, modelo.modeloId, modelo.modeloDescricao, cor.corId, cor.corNome "
+                + "marca.marcaId, marca.marcaNome, modelo.modeloId, modelo.modeloDescricao, cor.corId, cor.corNome, "
+                + "motor.motorPotencia, tipoCombustivel "
                 + "FROM veiculo INNER JOIN modelo ON modelo.modeloId = veiculo.idModelo "
                 + "INNER JOIN marca ON marca.marcaId = modelo.idMarca "
-                + "INNER JOIN cor ON cor.corId = veiculo.idCor";
+                + "INNER JOIN cor ON cor.corId = veiculo.idCor "
+                + "INNER JOIN motor ON motor.idModelo = modelo.modeloId";
         List<Veiculo> retorno = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -113,7 +116,6 @@ public class VeiculoDAO {
 //        }
 //        return retorno;
 //    }
-
     public Veiculo buscar(Veiculo veiculo) {
         String sql = "SELECT veiculo.veiculoId, veiculo.veiculoPlaca, modelo.modeloId,modelo.modeloDescricao "
                 + "FROM veiculo INNER JOIN modelo ON modelo.modeloId = veiculo.idModelo WHERE veiculo.veiculoId = ?;";
@@ -136,9 +138,10 @@ public class VeiculoDAO {
         Marca marca = new Marca();
         Modelo modelo = new Modelo();
         Cor cor = new Cor();
-        
+
         modelo.setMarca(marca);
         veiculo.setModelo(modelo);
+
         veiculo.setCor(cor);
 
         veiculo.setObservacoes(rs.getString("veiculoObservacoes"));
@@ -150,6 +153,9 @@ public class VeiculoDAO {
         modelo.setDescricao(rs.getString("modeloDescricao"));
         cor.setId(rs.getInt("corId"));
         cor.setNome(rs.getString("corNome"));
+        modelo.getMotor().setPotencia(rs.getInt("motorPotencia"));
+        modelo.getMotor().setTipoCombustivel(Enum.valueOf(ETipoCombustivel.class, rs.getString("tipoCombustivel")));
+
         return veiculo;
     }
 }

@@ -9,14 +9,26 @@ public class Veiculo implements Serializable {
     private Modelo modelo;
     private Cor cor;
     private String observacoes;
+    private Cliente cliente;
 
     public Veiculo(int id, String placa, Modelo modelo, Cor cor, String observacoes) {
+        this();
         this.id = id;
         this.placa = placa;
         this.modelo = modelo;
         this.cor = cor;
         this.observacoes = observacoes;
 
+    }
+
+    public Veiculo(int id, String placa, Modelo modelo, Cor cor, String observacoes, Cliente cliente) {
+        this.id = id;
+        this.placa = placa;
+        this.modelo = modelo;
+        this.cor = cor;
+        this.observacoes = observacoes;
+        this.modelo = modelo;
+        this.cliente = cliente;
     }
 
     public Veiculo() {
@@ -62,10 +74,17 @@ public class Veiculo implements Serializable {
         this.observacoes = observacoes;
     }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
     @Override
     public String toString() {
         return "Veiculo{" + "placa=" + placa + ", modelo=" + modelo + '}';
     }
-    
-    
+
 }

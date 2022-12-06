@@ -93,10 +93,14 @@ public class FXMLAnchorPaneCadastroModeloController implements Initializable {
             lbModeloId.setText(Integer.toString(modelo.getId()));
             lbModeloDescricao.setText(modelo.getDescricao());
             lbModeloMarca.setText(modelo.getMarca().getNome());
+            lbModeloMotor.setText(Integer.toString(modelo.getMotor().getPotencia()));
+            lbMotorCombustivel.setText(modelo.getMotor().getTipoCombustivel().getTipoCombustivel());
         } else {
             lbModeloId.setText("");
             lbModeloDescricao.setText("");
             lbModeloMarca.setText("");
+            lbModeloMotor.setText("");
+            lbMotorCombustivel.setText("");
         }
     }
 

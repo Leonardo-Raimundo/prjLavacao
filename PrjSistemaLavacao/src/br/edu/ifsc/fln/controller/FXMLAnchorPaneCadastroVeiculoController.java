@@ -1,5 +1,7 @@
 package br.edu.ifsc.fln.controller;
 
+import br.edu.ifsc.fln.model.dao.ModeloDAO;
+import br.edu.ifsc.fln.model.dao.MotorDAO;
 import br.edu.ifsc.fln.model.dao.VeiculoDAO;
 import br.edu.ifsc.fln.model.database.Database;
 import br.edu.ifsc.fln.model.database.DatabaseFactory;
@@ -13,7 +15,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -63,7 +64,7 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
     private final Database database = DatabaseFactory.getDatabase("mysql");
     private final Connection connection = database.conectar();
     private final VeiculoDAO veiculoDAO = new VeiculoDAO();
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         veiculoDAO.setConnection(connection);
@@ -92,6 +93,9 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
             lbVeiculoModelo.setText(veiculo.getModelo().getDescricao());
             lbVeiculoCor.setText(veiculo.getCor().getNome());
             lbVeiculoObservacoes.setText(veiculo.getObservacoes());
+            lbVeiculoTipoCombustivel.setText(veiculo.getModelo().getMotor().getTipoCombustivel().getTipoCombustivel());
+            lbVeiculoMotorHP.setText(Integer.toString(veiculo.getModelo().getMotor().getPotencia()));
+        
         } else {
             lbVeiculoId.setText("");
             lbVeiculoPlaca.setText("");

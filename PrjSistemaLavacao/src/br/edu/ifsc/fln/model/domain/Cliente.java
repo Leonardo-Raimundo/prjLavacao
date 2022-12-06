@@ -1,42 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.edu.ifsc.fln.model.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- *
- * @author mpisc
- */
-public class Cliente {
+public abstract class Cliente extends Object {
+
     private int id;
     private String nome;
-    private String cpf;
-    private String telefone;
-    private String endereco;
-    private LocalDate dataNascimento;
+    private String celular;
+    private String email;
+    private LocalDate dataCadastro;
 
-    public Cliente() {
-    }
-
-    public Cliente(String nome, String cpf, String telefone, String endereco, LocalDate dataNascimento) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.dataNascimento = dataNascimento;
-    }
-
-    public Cliente(int id, String nome, String cpf, String telefone, String endereco, LocalDate dataNascimento) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.dataNascimento = dataNascimento;
-    }
+    protected List<Veiculo> veiculos;
 
     public int getId() {
         return id;
@@ -54,41 +30,89 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getCelular() {
+        return celular;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setCelular(String celular) {
+        this.celular = celular;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public LocalDate getDataCadastro() {
+        return dataCadastro;
     }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setDataCadastro(LocalDate dataCadastro) {
+        this.dataCadastro = dataCadastro;
     }
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
+    public List<Veiculo> getVeiculos() {
+        return veiculos;
     }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setVeiculos(List<Veiculo> veiculos) {
+        this.veiculos = veiculos;
+    }
+
+    public void add(Veiculo veiculo) {
+        if (veiculos == null) {
+            veiculos = new ArrayList<>();
+        }
+        veiculos.add(veiculo);
+        veiculo.setCliente(this);
+    }
+
+    public void remove(Veiculo veiculo) {
+        if (veiculos != null) {
+            veiculos.remove(veiculo);
+            veiculo.setCliente(null);
+        }
     }
 
     @Override
     public String toString() {
         return nome;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cliente other = (Cliente) obj;
+        return this.id == other.id;
+    }
+
+    public String getDados() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Dados do cliente ").append(this.getClass().getSimpleName()).append("\n");
+        sb.append("Id........: ").append(id).append("\n");
+        sb.append("Nome......: ").append(nome).append("\n");
+        sb.append("Celular......: ").append(celular).append("\n");
+        sb.append("Email.....: ").append(email).append("\n");
+        sb.append("Data Cadastro.....: ").append(dataCadastro).append("\n");
+        return sb.toString();
+    }
+
 }
