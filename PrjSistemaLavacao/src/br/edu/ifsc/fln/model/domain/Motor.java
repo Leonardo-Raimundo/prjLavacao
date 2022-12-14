@@ -1,9 +1,10 @@
 package br.edu.ifsc.fln.model.domain;
 
 public class Motor {
+
     private int potencia;
     private ETipoCombustivel tipoCombustivel;
-    
+
     private Modelo modelo;
 
     public int getPotencia() {
@@ -34,6 +35,5 @@ public class Motor {
     public String toString() {
         return Integer.toString(this.potencia) + (this.tipoCombustivel);
     }
-    
-    
+
 }

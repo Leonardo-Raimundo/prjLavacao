@@ -155,7 +155,7 @@ public class FXMLAnchorPaneCadastroClienteController implements Initializable {
             }
         }
     }
-    
+
     private Cliente getTipoCliente() {
         List<String> opcoes = new ArrayList<>();
         opcoes.add("PessoaFisica");
@@ -166,10 +166,11 @@ public class FXMLAnchorPaneCadastroClienteController implements Initializable {
         dialog.setContentText("Tipo de cliente: ");
         Optional<String> escolha = dialog.showAndWait();
         if (escolha.isPresent()) {
-            if (escolha.get().equalsIgnoreCase("PessoaFisica")) 
+            if (escolha.get().equalsIgnoreCase("PessoaFisica")) {
                 return new PessoaFisica();
-            else 
+            } else {
                 return new PessoaJuridica();
+            }
         } else {
             return null;
         }

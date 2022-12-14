@@ -1,6 +1,7 @@
 package br.edu.ifsc.fln.model.domain;
 
 public class Marca {
+
     private int id;
     private String nome;
 
@@ -32,5 +33,4 @@ public class Marca {
         return nome;
     }
 
-    
 }

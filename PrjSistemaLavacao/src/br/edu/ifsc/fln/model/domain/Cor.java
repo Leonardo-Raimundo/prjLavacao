@@ -1,13 +1,14 @@
 package br.edu.ifsc.fln.model.domain;
 
 public class Cor {
+
     private int id;
     private String nome;
 
     public Cor(String nome) {
         this.nome = nome;
     }
-    
+
     public Cor() {
     }
 
@@ -31,7 +32,5 @@ public class Cor {
     public String toString() {
         return nome;
     }
-    
-    
-    
+
 }

@@ -32,7 +32,7 @@ public class ModeloDAO {
             stmt.setString(1, modelo.getDescricao());
             stmt.setInt(2, modelo.getMarca().getId());
             stmt.execute();
-            //registrar o motor
+
             stmt = connection.prepareStatement(sqlMotor);
             stmt.setInt(1, modelo.getMotor().getPotencia());
             stmt.setString(2, modelo.getMotor().getTipoCombustivel().name());
@@ -116,6 +116,23 @@ public class ModeloDAO {
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, modelo.getId());
+            ResultSet resultado = stmt.executeQuery();
+            if (resultado.next()) {
+                retorno = populateVO(resultado);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ModeloDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return retorno;
+    }
+
+    public Modelo buscar(int id) {
+        String sql = "SELECT modelo.modeloId, modelo.modeloDescricao, marca.marcaId,marca.marcaNome "
+                + "FROM modelo INNER JOIN marca ON marca.marcaId = modelo.idMarca WHERE modelo.modeloId = ?;";
+        Modelo retorno = new Modelo();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
             ResultSet resultado = stmt.executeQuery();
             if (resultado.next()) {
                 retorno = populateVO(resultado);

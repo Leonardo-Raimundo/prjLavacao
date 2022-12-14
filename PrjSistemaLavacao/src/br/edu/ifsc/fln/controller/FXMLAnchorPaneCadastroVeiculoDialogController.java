@@ -1,15 +1,15 @@
 package br.edu.ifsc.fln.controller;
 
+import br.edu.ifsc.fln.model.dao.ClienteDAO;
 import br.edu.ifsc.fln.model.dao.CorDAO;
 import br.edu.ifsc.fln.model.dao.MarcaDAO;
 import br.edu.ifsc.fln.model.dao.ModeloDAO;
 import br.edu.ifsc.fln.model.database.Database;
 import br.edu.ifsc.fln.model.database.DatabaseFactory;
+import br.edu.ifsc.fln.model.domain.Cliente;
 import br.edu.ifsc.fln.model.domain.Cor;
-import br.edu.ifsc.fln.model.domain.ETipoCombustivel;
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
-import br.edu.ifsc.fln.model.domain.Motor;
 import br.edu.ifsc.fln.model.domain.Veiculo;
 import java.net.URL;
 import java.sql.Connection;
@@ -22,7 +22,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -39,6 +38,8 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
     @FXML
     private TextField tfVeiculoObservacoes;
     @FXML
+    private ComboBox<Cliente> cbVeiculoCliente;
+    @FXML
     private Button btConfirmar;
     @FXML
     private Button btCancelar;
@@ -51,6 +52,7 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
     private final MarcaDAO marcaDAO = new MarcaDAO();
     private final ModeloDAO modeloDAO = new ModeloDAO();
     private final CorDAO corDAO = new CorDAO();
+    private final ClienteDAO clienteDAO = new ClienteDAO();
 
     private Stage dialogStage;
     private boolean buttonConfirmarClicked = false;
@@ -61,9 +63,11 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
         marcaDAO.setConnection(connection);
         modeloDAO.setConnection(connection);
         corDAO.setConnection(connection);
+        clienteDAO.setConnection(connection);
         carregarComboBoxMarcas();
         carregarComboBoxModelos();
         carregarComboBoxCores();
+        carregarComboBoxClientes();
         setFocusLostHandle();
     }
 
@@ -76,6 +80,16 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
                 }
             }
         });
+    }
+
+    private List<Cliente> listaClientes;
+    private ObservableList<Cliente> observableListClientes;
+
+    public void carregarComboBoxClientes() {
+        listaClientes = clienteDAO.listar();
+        observableListClientes
+                = FXCollections.observableArrayList(listaClientes);
+        cbVeiculoCliente.setItems(observableListClientes);
     }
 
     private List<Marca> listaMarcas;
@@ -122,18 +136,12 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
         this.dialogStage = dialogStage;
     }
 
-    /**
-     * @return the buttonConfirmarClicked
-     */
-    public boolean isButtonConfirmarClicked() {
+    public boolean isBtConfirmarClicked() {
         return buttonConfirmarClicked;
     }
 
-    /**
-     * @param buttonConfirmarClicked the buttonConfirmarClicked to set
-     */
-    public void setButtonConfirmarClicked(boolean buttonConfirmarClicked) {
-        this.buttonConfirmarClicked = buttonConfirmarClicked;
+    public void setBtConfirmarClicked(boolean btConfirmarClicked) {
+        this.buttonConfirmarClicked = btConfirmarClicked;
     }
 
     /**
@@ -154,6 +162,7 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
             cbVeiculoModelo.getSelectionModel().select(veiculo.getModelo());
             cbVeiculoCor.getSelectionModel().select(veiculo.getCor());
             tfVeiculoObservacoes.setText(veiculo.getObservacoes());
+            cbVeiculoCliente.getSelectionModel().select(this.veiculo.getCliente());
         }
     }
 
@@ -168,6 +177,9 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
             veiculo.setCor(
                     cbVeiculoCor.getSelectionModel().getSelectedItem());
             veiculo.setObservacoes(tfVeiculoObservacoes.getText());
+
+            veiculo.setCliente(
+                    cbVeiculoCliente.getSelectionModel().getSelectedItem());
 
             buttonConfirmarClicked = true;
             dialogStage.close();
@@ -197,6 +209,10 @@ public class FXMLAnchorPaneCadastroVeiculoDialogController implements Initializa
 
         if (cbVeiculoCor.getSelectionModel().getSelectedItem() == null) {
             errorMessage += "Selecione uma cor!\n";
+        }
+
+        if (cbVeiculoCliente.getSelectionModel().getSelectedItem() == null) {
+            errorMessage += "Selecione um cliente! \n";
         }
 
         if (errorMessage.length() == 0) {

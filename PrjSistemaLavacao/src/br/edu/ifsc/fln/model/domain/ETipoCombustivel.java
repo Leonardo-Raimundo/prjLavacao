@@ -9,7 +9,7 @@ public enum ETipoCombustivel {
         this.id = id;
         this.tipoCombustivel = tipoCombustivel;
     }
-    
+
     private ETipoCombustivel(String tipoCombustivel) {
         this.tipoCombustivel = tipoCombustivel;
     }
@@ -17,7 +17,7 @@ public enum ETipoCombustivel {
     public int getId() {
         return id;
     }
-    
+
     public String getTipoCombustivel() {
         return tipoCombustivel;
     }

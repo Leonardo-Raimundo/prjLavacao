@@ -11,8 +11,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CorDAO {
+
     private Connection connection;
-    
+
     public Connection getConnection() {
         return connection;
     }
@@ -89,6 +90,23 @@ public class CorDAO {
             if (resultado.next()) {
                 cor.setNome(resultado.getString("corNome"));
                 retorno = cor;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CorDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return retorno;
+    }
+
+    public Cor buscar(int id) {
+        String sql = "SELECT * FROM cor WHERE corId=?";
+        Cor retorno = new Cor();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet resultado = stmt.executeQuery();
+            if (resultado.next()) {
+                retorno.setNome(resultado.getString("corNome"));
+                retorno.setId(resultado.getInt("corId"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(CorDAO.class.getName()).log(Level.SEVERE, null, ex);

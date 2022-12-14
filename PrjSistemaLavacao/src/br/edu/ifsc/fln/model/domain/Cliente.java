@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Cliente extends Object {
+public abstract class Cliente implements ICliente {
 
     private int id;
     private String nome;
@@ -105,6 +105,17 @@ public abstract class Cliente extends Object {
     }
 
     public String getDados() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Dados do cliente ").append(this.getClass().getSimpleName()).append("\n");
+        sb.append("Id........: ").append(id).append("\n");
+        sb.append("Nome......: ").append(nome).append("\n");
+        sb.append("Celular......: ").append(celular).append("\n");
+        sb.append("Email.....: ").append(email).append("\n");
+        sb.append("Data Cadastro.....: ").append(dataCadastro).append("\n");
+        return sb.toString();
+    }
+    
+     public String getDados(String observacao) {
         StringBuilder sb = new StringBuilder();
         sb.append("Dados do cliente ").append(this.getClass().getSimpleName()).append("\n");
         sb.append("Id........: ").append(id).append("\n");

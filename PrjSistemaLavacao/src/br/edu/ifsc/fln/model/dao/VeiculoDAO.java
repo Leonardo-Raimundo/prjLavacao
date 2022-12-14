@@ -1,9 +1,12 @@
 package br.edu.ifsc.fln.model.dao;
 
+import br.edu.ifsc.fln.model.domain.Cliente;
 import br.edu.ifsc.fln.model.domain.Cor;
 import br.edu.ifsc.fln.model.domain.ETipoCombustivel;
 import br.edu.ifsc.fln.model.domain.Marca;
 import br.edu.ifsc.fln.model.domain.Modelo;
+import br.edu.ifsc.fln.model.domain.PessoaFisica;
+import br.edu.ifsc.fln.model.domain.PessoaJuridica;
 import br.edu.ifsc.fln.model.domain.Veiculo;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,15 +30,15 @@ public class VeiculoDAO {
     }
 
     public boolean inserir(Veiculo veiculo) {
-        String sql = "INSERT INTO veiculo(veiculoPlaca,veiculoObservacoes, idModelo, idCor) "
-                + "VALUES(?,?,?,?)";
+        String sql = "INSERT INTO veiculo(veiculoPlaca,veiculoObservacoes, idModelo, idCor, idCliente) "
+                + "VALUES(?,?,?,?,?)";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, veiculo.getPlaca());
             stmt.setString(2, veiculo.getObservacoes());
-//            stmt.setInt(3, veiculo.getModelo().getMarca().getId());
             stmt.setInt(3, veiculo.getModelo().getId());
             stmt.setInt(4, veiculo.getCor().getId());
+            stmt.setInt(5, veiculo.getCliente().getId());
             stmt.execute();
             return true;
         } catch (SQLException ex) {
@@ -46,15 +49,15 @@ public class VeiculoDAO {
 
     public boolean alterar(Veiculo veiculo) {
         String sql = "UPDATE veiculo SET veiculoPlaca=?, veiculoObservacoes=?, idModelo=?, "
-                + "idCor=? WHERE veiculoId=?";
+                + "idCor=?, idCliente=? WHERE veiculoId=?";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setString(1, veiculo.getPlaca());
             stmt.setString(2, veiculo.getObservacoes());
-//            stmt.setInt(3, veiculo.getModelo().getMarca().getId());
             stmt.setInt(3, veiculo.getModelo().getId());
             stmt.setInt(4, veiculo.getCor().getId());
-            stmt.setInt(5, veiculo.getId());
+            stmt.setInt(5, veiculo.getCliente().getId());
+            stmt.setInt(6, veiculo.getId());
             stmt.execute();
             return true;
         } catch (SQLException ex) {
@@ -79,11 +82,13 @@ public class VeiculoDAO {
     public List<Veiculo> listar() {
         String sql = "SELECT veiculo.veiculoId, veiculo.veiculoPlaca, veiculo.veiculoObservacoes, "
                 + "marca.marcaId, marca.marcaNome, modelo.modeloId, modelo.modeloDescricao, cor.corId, cor.corNome, "
-                + "motor.motorPotencia, tipoCombustivel "
+                + "motor.motorPotencia, tipoCombustivel, "
+                + "cliente.clienteNome, idCliente "
                 + "FROM veiculo INNER JOIN modelo ON modelo.modeloId = veiculo.idModelo "
                 + "INNER JOIN marca ON marca.marcaId = modelo.idMarca "
                 + "INNER JOIN cor ON cor.corId = veiculo.idCor "
-                + "INNER JOIN motor ON motor.idModelo = modelo.modeloId";
+                + "INNER JOIN motor ON motor.idModelo = modelo.modeloId "
+                + "INNER JOIN cliente ON cliente.clienteId = veiculo.idCliente";
         List<Veiculo> retorno = new ArrayList<>();
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -138,10 +143,11 @@ public class VeiculoDAO {
         Marca marca = new Marca();
         Modelo modelo = new Modelo();
         Cor cor = new Cor();
+        PessoaFisica clientePF = new PessoaFisica();
+        PessoaJuridica clientePJ = new PessoaJuridica();
 
         modelo.setMarca(marca);
         veiculo.setModelo(modelo);
-
         veiculo.setCor(cor);
 
         veiculo.setObservacoes(rs.getString("veiculoObservacoes"));
@@ -155,7 +161,10 @@ public class VeiculoDAO {
         cor.setNome(rs.getString("corNome"));
         modelo.getMotor().setPotencia(rs.getInt("motorPotencia"));
         modelo.getMotor().setTipoCombustivel(Enum.valueOf(ETipoCombustivel.class, rs.getString("tipoCombustivel")));
-
+        ClienteDAO clienteDAO = new ClienteDAO();
+        clienteDAO.setConnection(connection);
+        Cliente cliente = clienteDAO.buscar(rs.getInt("idCliente"));
         return veiculo;
     }
+
 }

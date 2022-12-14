@@ -1,6 +1,7 @@
 package br.edu.ifsc.fln.model.domain;
 
 public class PessoaJuridica extends Cliente {
+
     private String cnpj;
     private String inscricaoEstadual;
 
@@ -19,13 +20,13 @@ public class PessoaJuridica extends Cliente {
     public void setInscricaoEstadual(String inscricaoEstadual) {
         this.inscricaoEstadual = inscricaoEstadual;
     }
-    
-     @Override
+
+    @Override
     public String getDados() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.getDados()).append("\n");
         sb.append("CNPJ.......: ").append(cnpj).append("\n");
         sb.append("Inscrição Estadual......: ").append(inscricaoEstadual).append("\n");
         return sb.toString();
-    }    
+    }
 }

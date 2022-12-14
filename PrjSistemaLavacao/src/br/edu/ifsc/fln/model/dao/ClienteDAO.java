@@ -141,11 +141,29 @@ public class ClienteDAO {
         return retorno;
     }
 
+    public Cliente buscar(int id) {
+        String sql = "SELECT * FROM cliente "
+                + "LEFT JOIN pessoaFisica ON pessoaFisica.idCliente = cliente.clienteId "
+                + "LEFT JOIN pessoaJuridica ON pessoaJuridica.idCliente = cliente.clienteId WHERE clienteId = ?";
+        Cliente retorno = null;
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet resultado = stmt.executeQuery();
+            if (resultado.next()) {
+                retorno = populateVO(resultado);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return retorno;
+    }
+
     private Cliente populateVO(ResultSet rs) throws SQLException {
         Cliente cliente;
 
         if (rs.getString("cnpj") == null || rs.getString("cnpj").length() <= 0) {
-            //é cliente pessoa física
+
             cliente = new PessoaFisica();
             ((PessoaFisica) cliente).setCpf(rs.getString("cpf"));
             ((PessoaFisica) cliente).setDataNascimento(rs.getDate("dataNascimento").toLocalDate());

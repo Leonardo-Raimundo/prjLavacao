@@ -51,6 +51,8 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
     @FXML
     private Label lbVeiculoObservacoes;
     @FXML
+    private Label lbVeiculoCliente;
+    @FXML
     private Button btInserir;
     @FXML
     private Button btAlterar;
@@ -95,6 +97,7 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
             lbVeiculoObservacoes.setText(veiculo.getObservacoes());
             lbVeiculoTipoCombustivel.setText(veiculo.getModelo().getMotor().getTipoCombustivel().getTipoCombustivel());
             lbVeiculoMotorHP.setText(Integer.toString(veiculo.getModelo().getMotor().getPotencia()));
+//            lbVeiculoCliente.setText(veiculo.getCliente().getNome());
         
         } else {
             lbVeiculoId.setText("");
@@ -103,6 +106,7 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
             lbVeiculoModelo.setText("");
             lbVeiculoCor.setText("");
             lbVeiculoObservacoes.setText("");
+            lbVeiculoCliente.setText("");
         }
     }
 
@@ -164,7 +168,7 @@ public class FXMLAnchorPaneCadastroVeiculoController implements Initializable {
 
         dialogStage.showAndWait();
 
-        return controller.isButtonConfirmarClicked();
+        return controller.isBtConfirmarClicked();
     }
 
 }
